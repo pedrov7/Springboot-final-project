@@ -17,10 +17,13 @@ public class Course {
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(nullable = false, length = 60)
-    private String name;
+
     @Column(nullable = false, length = 10)
+    private String name;
+
+    @Column(nullable = false, length = 5)
     private String acronym;
+
     @Column(nullable = false)
     private boolean state;
 

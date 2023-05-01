@@ -29,7 +29,7 @@ public class Enrollment {
     private Student student;
 
     @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL)
-    private List<EnrollmentDetail> enrollmentDetail;
+    private List<EnrollmentDetail> enrollmentDetails;
 
     @Column(nullable = false)
     private boolean state;

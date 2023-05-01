@@ -15,6 +15,6 @@ public class StudentServiceImpl extends CRUDImpl<Student,Integer> implements ISt
 
     @Override
     protected IGenericRepository<Student, Integer> getRepository() {
-        return null;
+        return repo;
     }
 }
