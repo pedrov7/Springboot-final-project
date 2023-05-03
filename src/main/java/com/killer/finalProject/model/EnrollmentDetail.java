@@ -29,6 +29,4 @@ public class EnrollmentDetail {
     @Column(nullable = false, length = 25)
     private String room;
 
-
-
 }

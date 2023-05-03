@@ -1,16 +1,17 @@
 package com.killer.finalProject.controller;
 
+import com.killer.finalProject.dto.EnrollmentDTO;
 import com.killer.finalProject.model.Enrollment;
-import com.killer.finalProject.model.EnrollmentDetail;
-import com.killer.finalProject.service.IEnrollmentDetailService;
 import com.killer.finalProject.service.IEnrollmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/enrollments")
@@ -18,29 +19,46 @@ import java.util.List;
 public class EnrollmentController {
 
     private final IEnrollmentService service;
+    private final ModelMapper mapper;
 
     @GetMapping
-    public ResponseEntity<List<Enrollment>> readAll() throws Exception {
-        List<Enrollment> list = service.readAll();
+    public ResponseEntity<List<EnrollmentDTO>> readAll() throws Exception {
+        List<EnrollmentDTO> list = service.readAll().stream()
+                .map(this::convertToDto).collect(Collectors.toList());
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EnrollmentDTO> readById(@PathVariable("id") Integer id) throws Exception {
+        Enrollment obj = service.readById(id);
+        EnrollmentDTO dto = this.convertToDto(obj);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
     @PostMapping
-    public ResponseEntity<Enrollment> create(@RequestBody Enrollment enrollment) throws Exception {
-        Enrollment object = service.save(enrollment);
-        return new ResponseEntity<>(object, HttpStatus.OK);
+    public ResponseEntity<EnrollmentDTO> create(@Valid @RequestBody EnrollmentDTO dto) throws Exception {
+        Enrollment object = service.save(this.convertToEntity(dto));
+        return new ResponseEntity<>(this.convertToDto(object), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Enrollment> update(@PathVariable("id") Integer id, @RequestBody Enrollment enrollment) throws Exception {
-        enrollment.setId(id);
-        Enrollment object = service.update(enrollment, id);
-        return new ResponseEntity<>(object, HttpStatus.OK);
+    public ResponseEntity<EnrollmentDTO> update(@PathVariable("id") Integer id, @Valid @RequestBody EnrollmentDTO dto) throws Exception {
+        dto.setId(id);
+        Enrollment object = service.update(this.convertToEntity(dto), id);
+        return new ResponseEntity<>(this.convertToDto(object), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    public EnrollmentDTO convertToDto(Enrollment obj) {
+        return mapper.map(obj, EnrollmentDTO.class);
+    }
+
+    public Enrollment convertToEntity(EnrollmentDTO entity) {
+        return mapper.map(entity, Enrollment.class);
     }
 }

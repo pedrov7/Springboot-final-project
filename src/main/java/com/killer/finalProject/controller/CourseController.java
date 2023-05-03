@@ -1,49 +1,64 @@
 package com.killer.finalProject.controller;
 
+import com.killer.finalProject.dto.CourseDTO;
 import com.killer.finalProject.model.Course;
 import com.killer.finalProject.service.ICourseService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/courses")
 @RequiredArgsConstructor
 public class CourseController {
     private final ICourseService service;
+    private final ModelMapper mapper;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Course> readById(@PathVariable("id") Integer id) throws Exception {
+    public ResponseEntity<CourseDTO> readById(@PathVariable("id") Integer id) throws Exception {
         Course course = service.readById(id);
-        return new ResponseEntity<>(course, HttpStatus.OK);
+        CourseDTO courseDTO = this.convertToDto(course);
+        return new ResponseEntity<>(courseDTO, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<Course>> readAll() throws Exception {
-        List<Course> listOfCourses = service.readAll();
+    public ResponseEntity<List<CourseDTO>> readAll() throws Exception {
+        List<CourseDTO> listOfCourses = service.readAll().stream()
+                .map(this::convertToDto).collect(Collectors.toList());
         return new ResponseEntity<>(listOfCourses, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Course> create(@RequestBody Course course) throws Exception {
-        Course object = service.save(course);
-        return new ResponseEntity<>(object,HttpStatus.OK);
+    public ResponseEntity<CourseDTO> create(@Valid @RequestBody CourseDTO courseDTO) throws Exception {
+        Course object = service.save(this.convertToEntity(courseDTO));
+        return new ResponseEntity<>(this.convertToDto(object), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Course> update (@PathVariable("id") Integer id, @RequestBody Course course) throws Exception{
-        course.setId(id);
-        Course object = service.update(course,id);
-        return new ResponseEntity<>(object,HttpStatus.OK);
+    public ResponseEntity<CourseDTO> update(@PathVariable("id") Integer id, @Valid @RequestBody CourseDTO courseDTO) throws Exception {
+        courseDTO.setId(id);
+        Course object = service.update(this.convertToEntity(courseDTO), id);
+        return new ResponseEntity<>(this.convertToDto(object), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete (@PathVariable("id") Integer id) throws Exception{
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    public CourseDTO convertToDto(Course obj) {
+        return mapper.map(obj, CourseDTO.class);
+    }
+
+    public Course convertToEntity(CourseDTO entity) {
+        return mapper.map(entity, Course.class);
     }
 
 }
