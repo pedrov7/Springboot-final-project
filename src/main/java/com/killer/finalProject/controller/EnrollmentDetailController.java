@@ -29,18 +29,24 @@ public class EnrollmentDetailController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EnrollmentDetailDTO> readById(@PathVariable("id") Integer id) throws Exception {
+        EnrollmentDetailDTO dto = this.convertToDto(service.readById(id));
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<EnrollmentDetailDTO> create(@Valid @RequestBody EnrollmentDetailDTO dto) throws Exception {
         EnrollmentDetail object = service.save(this.convertToEntity(dto));
         return new ResponseEntity<>(this.convertToDto(object), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<EnrollmentDetailDTO> update(@PathVariable("id") Integer id, @Valid @RequestBody EnrollmentDetailDTO dto) throws Exception {
-        dto.setId(id);
-        EnrollmentDetail object = service.update(this.convertToEntity(dto), id);
-        return new ResponseEntity<>(this.convertToDto(object), HttpStatus.OK);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<EnrollmentDetailDTO> update(@PathVariable("id") Integer id, @Valid @RequestBody EnrollmentDetailDTO dto) throws Exception {
+//        dto.setId(id);
+//        EnrollmentDetail object = service.update(this.convertToEntity(dto), id);
+//        return new ResponseEntity<>(this.convertToDto(object), HttpStatus.OK);
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Integer id) throws Exception {

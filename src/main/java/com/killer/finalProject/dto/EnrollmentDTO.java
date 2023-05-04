@@ -1,5 +1,8 @@
 package com.killer.finalProject.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.killer.finalProject.model.EnrollmentDetail;
 import com.killer.finalProject.model.Student;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,16 +21,14 @@ public class EnrollmentDTO {
 
     private Integer id;
 
-    @NotNull
-    @NotEmpty
     private LocalDateTime enrollmentDate;
 
     @NotNull
-    @NotEmpty
-    private Student student;
+    private StudentDTO student;
 
     @NotNull
-    private List<EnrollmentDetail> enrollmentDetails;
+    @JsonManagedReference
+    private List<EnrollmentDetailDTO> details;
 
     @NotNull
     private boolean state;

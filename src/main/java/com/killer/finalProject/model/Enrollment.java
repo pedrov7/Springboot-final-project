@@ -1,5 +1,6 @@
 package com.killer.finalProject.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class Enrollment {
     private Integer id;
 
     @Column(nullable = false)
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime enrollmentDate;
 
     @ManyToOne
@@ -29,7 +31,7 @@ public class Enrollment {
     private Student student;
 
     @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL)
-    private List<EnrollmentDetail> enrollmentDetails;
+    private List<EnrollmentDetail> details;
 
     @Column(nullable = false)
     private boolean state;

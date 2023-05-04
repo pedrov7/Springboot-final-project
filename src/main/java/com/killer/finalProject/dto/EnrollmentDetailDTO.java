@@ -1,5 +1,6 @@
 package com.killer.finalProject.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.killer.finalProject.model.Course;
 import com.killer.finalProject.model.Enrollment;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,15 +15,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EnrollmentDetailDTO {
 
-        private Integer id;
-
         @NotNull
-        @NotEmpty
-        private Course course;
+        private CourseDTO course;
 
-        @NotNull
-        @NotEmpty
-        private Enrollment enrollment;
+        @JsonBackReference
+        private EnrollmentDTO enrollment;
 
         @NotNull
         @NotEmpty
