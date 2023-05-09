@@ -1,10 +1,12 @@
 package com.killer.finalProject.service.implementation;
 
 import com.killer.finalProject.exception.ModelNotFoundException;
+import com.killer.finalProject.model.Enrollment;
 import com.killer.finalProject.repository.IGenericRepository;
 import com.killer.finalProject.service.ICRUD;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class CRUDImpl<T,ID> implements ICRUD<T,ID> {
 

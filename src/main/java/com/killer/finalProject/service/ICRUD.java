@@ -1,6 +1,9 @@
 package com.killer.finalProject.service;
 
+import com.killer.finalProject.model.Enrollment;
+
 import java.util.List;
+import java.util.Map;
 
 public interface ICRUD<T,ID> {
 
@@ -13,4 +16,5 @@ public interface ICRUD<T,ID> {
     T readById(ID id) throws Exception;
 
     void delete(ID id) throws Exception;
+
 }

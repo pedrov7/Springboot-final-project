@@ -1,18 +1,26 @@
 package com.killer.finalProject.controller;
 
 import com.killer.finalProject.dto.EnrollmentDTO;
+import com.killer.finalProject.dto.EnrollmentDetailDTO;
+import com.killer.finalProject.dto.StudentDTO;
+import com.killer.finalProject.model.Course;
 import com.killer.finalProject.model.Enrollment;
+import com.killer.finalProject.model.EnrollmentDetail;
+import com.killer.finalProject.model.Student;
 import com.killer.finalProject.service.IEnrollmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/enrollments")
 @RequiredArgsConstructor
@@ -53,6 +61,25 @@ public class EnrollmentController {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/course_students")
+    public ResponseEntity<Map<String, Map<StudentDTO, List<EnrollmentDetailDTO>>>> relationCourseStudents() throws Exception {
+        List<EnrollmentDTO> list = service.readAll().stream()
+                .map(this::convertToDto).toList();
+
+        //Primera forma de representar la relación de cursos matriculados y sus estudiantes correspondientes
+        Map<String, Map<StudentDTO, List<EnrollmentDetailDTO>>> relation = list.stream()
+                .flatMap(d -> d.getDetails().stream()).collect(Collectors.groupingBy(course -> course.getCourse().getName(),
+                        Collectors.groupingBy(name -> name.getEnrollment().getStudent())));
+
+        //Segunda forma de representar la relación de cursos matriculados y sus estudiantes correspondientes
+//        Map<String, Map<String, List<EnrollmentDetailDTO>>> relation = list.stream()
+//                .flatMap(d -> d.getDetails().stream()).collect(Collectors.groupingBy(course -> course.getCourse().getName(),
+//                        Collectors.groupingBy(name -> name.getEnrollment().getStudent().getName())));
+
+        return new ResponseEntity<>(relation, HttpStatus.OK);
+    }
+
 
     public EnrollmentDTO convertToDto(Enrollment obj) {
         return mapper.map(obj, EnrollmentDTO.class);

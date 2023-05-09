@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,13 @@ public class StudentController {
     public ResponseEntity<StudentDTO> readById(@PathVariable("id") Integer id) throws Exception {
         StudentDTO dto = this.convertToDto(service.readById(id));
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @GetMapping("/ordered")
+    public ResponseEntity<List<StudentDTO>> readAllByDescendingAge() throws Exception {
+        List<StudentDTO> list = service.getStudentsOrdered().stream()
+                .map(this::convertToDto).collect(Collectors.toList());
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @GetMapping

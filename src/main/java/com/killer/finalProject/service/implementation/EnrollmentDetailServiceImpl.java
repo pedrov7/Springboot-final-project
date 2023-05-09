@@ -17,4 +17,5 @@ public class EnrollmentDetailServiceImpl extends CRUDImpl<EnrollmentDetail,Integ
     protected IGenericRepository<EnrollmentDetail, Integer> getRepository() {
         return repo;
     }
+
 }
