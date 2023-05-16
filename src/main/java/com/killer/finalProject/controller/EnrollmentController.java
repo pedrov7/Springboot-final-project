@@ -62,22 +62,14 @@ public class EnrollmentController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Return Students enrolled by Course, the convertion to DTO is in Service Implementation
+     */
     @GetMapping("/course_students")
-    public ResponseEntity<Map<String, Map<StudentDTO, List<EnrollmentDetailDTO>>>> relationCourseStudents() throws Exception {
-        List<EnrollmentDTO> list = service.readAll().stream()
-                .map(this::convertToDto).toList();
+    public ResponseEntity<Map<String, List<String>>> relationCourseStudents() throws Exception {
+        Map<String, List<String>> answer = service.getStudentsByCourse();
 
-        //Primera forma de representar la relación de cursos matriculados y sus estudiantes correspondientes
-        Map<String, Map<StudentDTO, List<EnrollmentDetailDTO>>> relation = list.stream()
-                .flatMap(d -> d.getDetails().stream()).collect(Collectors.groupingBy(course -> course.getCourse().getName(),
-                        Collectors.groupingBy(name -> name.getEnrollment().getStudent())));
-
-        //Segunda forma de representar la relación de cursos matriculados y sus estudiantes correspondientes
-//        Map<String, Map<String, List<EnrollmentDetailDTO>>> relation = list.stream()
-//                .flatMap(d -> d.getDetails().stream()).collect(Collectors.groupingBy(course -> course.getCourse().getName(),
-//                        Collectors.groupingBy(name -> name.getEnrollment().getStudent().getName())));
-
-        return new ResponseEntity<>(relation, HttpStatus.OK);
+        return new ResponseEntity<>(answer, HttpStatus.OK);
     }
 
 
@@ -88,4 +80,5 @@ public class EnrollmentController {
     public Enrollment convertToEntity(EnrollmentDTO entity) {
         return mapper.map(entity, Enrollment.class);
     }
+
 }
